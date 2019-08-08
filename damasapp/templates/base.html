@@ -1,0 +1,35 @@
+{% load cms_tags menu_tags sekizai_tags staticfiles%}
+<!doctype html>
+<html>
+    <head>
+        <title>{% block title %}DAMAS{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{%static 'css/visual.css'%}">
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+        <style>
+            .navbar-inverse{
+            background-color: #87CEFA;
+            border-color: #87CEFA;
+	        }
+            html, body {
+                width: 98%;
+                margin: auto;
+            }
+        </style>
+        {% render_block "css" %}
+    </head>
+    <body>
+        {% cms_toolbar %}
+
+        {% block menu %} {% endblock menu %}
+        {% block content %}{% endblock content %}
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+        {% render_block "js" %}
+    </body>
+</html>

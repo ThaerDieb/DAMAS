@@ -1,0 +1,12 @@
+
+Proton configurations in the hydrogen bonds of KH2PO4 as seen by resonant x-ray diffraction.
+KH2PO4 (KDP) belongs to the class of hydrogen-bonded ferroelectrics, whose paraelectric to
+ferroelectric phase transition is driven by the ordering of the protons in the hydrogen bonds. We
+demonstrate that forbidden reflections of KDP, when measured at an x-ray absorption edge, are
+highly sensitive to the asymmetry of proton configurations. The change of average symmetry caused
+by the ’freezing’ of the protons during the phase transition is clearly evidenced. In the paraelectric
+phase, we identify in the resonant spectra of the forbidden reflections a contribution related to the
+transient proton configurations in the hydrogen bonds, which violates the high average symmetry
+of the sites of the resonant atoms. The analysis of the temperature dependence reveals a change of
+relative probabilities of the different proton configurations. They follow the Arrhenius law and the
+activation energies of polar and Slater configurations are 18.6 and 7.3 meV respectively.

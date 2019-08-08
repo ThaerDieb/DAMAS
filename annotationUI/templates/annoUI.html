@@ -1,0 +1,302 @@
+<style>
+    #files{
+        width:200px;
+        float:left;
+    }
+    #annoui{
+        float:left;
+        padding:20px;
+        width:1010px;
+    }
+</style>
+
+<div>
+<div id="files">
+<h3><span class="label label-primary">Document list</span></h3>
+
+<div id="file_list" class="list-group" style="height: 650px; overflow-y:auto;">
+        {% for item in file_list %}
+    <a href="?file={{item}}" class="list-group-item">{{item}}</a>
+        {% endfor %}
+</div>
+</div>
+
+<div id="annoui">
+<div id="controls">
+    <button type="button" class="btn btn-link"><a href="/">Home</a></button>
+
+    <button class="btn btn-danger" id="save">
+        <span class="glyphicon glyphicon-floppy-saved"></span> Save
+    </button>
+    <button class="btn btn-info disabled" id="undo" >
+        <span class="glyphicon glyphicon-step-backward"></span>Undo
+    </button>
+    <button id="chemspot" class="btn btn-warning">
+        <span class="glyphicon glyphicon-triangle-right"></span>ChemSpot
+    </button>
+    <h4><span class="label label-danger" id="status" style="display:none;">{{status}}</span></h4>
+</div>
+<div id="categories">
+     {% for cat, tag, color in cat %}
+    <label class="radio-inline">
+        <h4><input type="radio" name="optradio" value="{{tag}}"><span class="label" style="background-color:{{color}}"><font color="black">{{cat}}</font></span></h4>
+    </label>
+     {% endfor %}
+</div>
+
+<div class="panel panel-default" id="annopanel" style="max-height: 530px; overflow-y:scroll;">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{file_name}}</h3>
+    </div>
+    <font size="4">
+    <div id="anno_doc" class="panel-body" oncontextmenu="return false;">
+        {% autoescape off %}
+        {{file}}
+        {% endautoescape %}
+
+    </div>
+    </font>
+</div>
+
+</div>
+</div>
+
+<div id="ContMenu" style="display:none;">
+  <ul>
+    <button id="del" type="button" class="btn btn-primary" style="width:130px;">Delete</button></br>
+    <button id="changecat" type="button" class="btn btn-primary" style="width:130px;">Change category</button></br>
+  </ul>
+</div>
+
+
+<div id="sugMenu" style="display:none;">
+  <ul>
+    <button id="accept" type="button" class="btn btn-warning" style="width:70px;">Accept</button></br>
+    <button id="reject" type="button" class="btn btn-warning" style="width:70px;">Reject</button></br>
+  </ul>
+</div>
+
+
+<script>
+var tag="";
+var selection;
+var undolist=[];
+var mode;
+
+function addTerm(seltxt){
+    var range = seltxt.getRangeAt(0);
+    if (seltxt!=""){
+        if (seltxt.rangeCount) {
+            var container = document.createElement("div");
+            for (var i = 0, len = seltxt.rangeCount; i < len; ++i) {
+                container.appendChild(seltxt.getRangeAt(i).cloneContents());
+            }
+        }
+        if (tag==""){
+            alert("Please select category first");
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+            else if (document.selection){
+                document.selection.empty();
+            }
+        }
+        else{
+            undolist.push($("#anno_doc").html());
+            $("#undo").removeClass('disabled').addClass('active');
+            var newtxt="";
+            if(seltxt.anchorNode.parentNode.nodeName=="TERM"){
+                newtxt='<term id="T0" sem="'+tag+'" type="nest">'+seltxt+'</term>';
+            }
+            else if (container.getElementsByTagName("TERM").length > 0){
+                var c=container.getElementsByTagName("TERM")
+                for(i=0; i < c.length; i++){
+                    c[i].setAttribute("type","nest");
+                }
+                newtxt='<term id="T0" sem="'+tag+'">'+container.innerHTML+'</term>';
+            }
+            else{
+                newtxt='<term id="T0" sem="'+tag+'">'+seltxt+'</term>';
+            }
+            range.deleteContents();
+            range.insertNode(document.createTextNode(newtxt));
+            var decoded = $("<textarea />").html($("#anno_doc").html()).text();
+            $("#anno_doc").html(decoded);
+        }
+    }
+}
+
+$(document).ready(function(){
+    $("#anno_doc").mouseup(function(e){
+        var seltxt = window.getSelection();
+        selection=seltxt;
+        if (e.which==1){
+            addTerm(seltxt);
+        }
+        else if (e.which==3) {
+            if (mode!="sug"){
+                $("#ContMenu").css( {position:'absolute', top:event.pageY, left: event.pageX});
+                $("#ContMenu").fadeIn();
+            }
+            else {
+                $("#sugMenu").css( {position:'absolute', top:event.pageY, left: event.pageX});
+                $("#sugMenu").fadeIn();
+            }
+        }
+    });
+});
+
+
+
+$('#categories input').on('change', function() {
+   tag=$('input[name=optradio]:checked', '#categories').val();
+});
+
+
+$('#del').click(function(){
+    undolist.push($("#anno_doc").html());
+    $("#undo").removeClass('disabled').addClass('active');
+    var innertxt=selection.anchorNode.parentNode.innerHTML;
+    selection.anchorNode.parentNode.outerHTML=innertxt;
+    $("#ContMenu").fadeOut();
+});
+
+$('#changecat').click(function(){
+    if (tag==""){
+        alert("Please select category first");
+        if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        }
+        else if (document.selection){
+            document.selection.empty();
+        }
+    }
+    else{
+        undolist.push($("#anno_doc").html());
+        $("#undo").removeClass('disabled').addClass('active');
+        selection.anchorNode.parentNode.setAttribute("sem",tag);
+        $("#ContMenu").fadeOut();
+    }
+});
+
+
+$('#accept').click(function(){
+    if (tag==""){
+        alert("Please select category first");
+        if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        }
+        else if (document.selection){
+            document.selection.empty();
+        }
+    }
+    else{
+        undolist.push($("#anno_doc").html());
+        $("#undo").removeClass('disabled').addClass('active');
+        selection.anchorNode.parentNode.setAttribute("sem",tag);
+        $("#sugMenu").fadeOut();
+    }
+});
+
+$('#reject').click(function(){
+    undolist.push($("#anno_doc").html());
+    $("#undo").removeClass('disabled').addClass('active');
+    var innertxt=selection.anchorNode.parentNode.innerHTML;
+    selection.anchorNode.parentNode.outerHTML=innertxt;
+    $("#sugMenu").fadeOut();
+});
+
+$(document).click(function(){
+    $("#ContMenu").fadeOut();
+    $("#sugMenu").fadeOut();
+});
+
+
+$(document).ready(function(){
+    $("#undo").click(function(e){
+            if (undolist.length!=0){
+                var decoded = $("<textarea />").html(undolist.pop()).text();
+                $("#anno_doc").html(decoded);
+                if (undolist.length==0){
+                        $("#undo").removeClass('active').addClass('disabled');
+                }
+            }
+    });
+});
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+$(document).ready(function(){
+    $("#save").click(function(e){
+      if(confirm ("Save the document?")){
+          $.ajax({
+             headers: {
+                'Content-Type':'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            type:'POST',
+            url:location.href,
+            data:JSON.stringify({'div': $("#anno_doc").html(),'url':location.href,'action':'save'}),
+            success: function(response){
+                $("#status").html("File Saved").fadeIn(1000).fadeOut(1000);
+                $("#undo").removeClass('active').addClass('disabled');
+                undolist=[];
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                window.alert("File couldnot be saved "+errorThrown);
+             }
+          });
+      }
+    });
+});
+
+$(document).ready(function(){
+    $("#chemspot").click(function(e){
+      if(confirm ("ChemSpot will reset annotation!!Are you sure?")){
+          window.location.replace("?file={{file_name}}&sug=chemspot");
+          $("#status").html("working, patience is a virtue!").fadeIn(4000);
+      }
+    });
+});
+
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
+
+$(document).ready(function(){
+    if ($("#status").html()!=""){
+        $("#status").fadeIn(2000).fadeOut(2000);
+    }
+    var sug = getUrlParameter('sug');
+    if (sug!=undefined){
+        mode="sug";
+    }
+});
+
+</script>
+

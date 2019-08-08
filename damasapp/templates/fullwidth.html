@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load cms_tags menu_tags%}
+
+{% block title %}{% page_attribute "page_title" %}{% endblock title %}
+{% block menu %}
+<nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <ul class="nav navbar-nav">
+                {% show_menu 0 100 100 100 %}
+            </ul>
+        </div>
+</nav>
+{% endblock menu %}
+{% block content %}
+	{% placeholder "content" %}
+{% endblock content %}

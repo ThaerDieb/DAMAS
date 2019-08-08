@@ -1,0 +1,11 @@
+	0	5	Proton	SYSTEMATIC													
+	29	36	hydrogen	SYSTEMATIC													
+	47	52	KH2PO4	FORMULA													
+	93	104	KH2PO4 (KDP)	FORMULA													
+	130	137	hydrogen	SYSTEMATIC													
+	263	270	hydrogen	SYSTEMATIC													
+	324	326	KDP	SYSTEMATIC													
+	413	418	proton	SYSTEMATIC													
+	693	698	proton	SYSTEMATIC													
+	722	729	hydrogen	SYSTEMATIC													
+	918	923	proton	SYSTEMATIC													

@@ -1,0 +1,7 @@
+term:after {content: attr(id); font-size: 8pt; color: white; background-color: black}
+term	 {background-color: #F5DEB3 }
+term[sem="Other"]	{background-color: #8c8c8c;}
+term[sem="Ma"] {background-color:#fffb00;}
+term[sem="Me"] {background-color:#0433ff;}
+term[sem="Par"] {background-color:#ff0000;}
+term[type="nest"] {font-size:80%}
